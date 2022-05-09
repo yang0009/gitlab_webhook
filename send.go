@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"os"
 	"strings"
-
 	"github.com/gin-gonic/gin"
+	"k8s.io/apimachinery/pkg/util/json"
 )
 
 type Markdownform struct {
@@ -24,30 +24,28 @@ type Webhookdata struct {
 // 触发企业微信机器人
 func WetchatWebhook(cont string) {
 	uri := os.Getenv("URL")
-	client := &http.Client{}
-	urlmap := url.Values{}
 	w := &Webhookdata{
 		msgtype:      "markdown",
 		Markdownform: &Markdownform{cont},
 	}
-	urlmap.Add("msgtype", w.msgtype)
-	urlmap.Add("markdown", w.content)
-	parms := ioutil.NopCloser(strings.NewReader(urlmap.Encode())) //把form数据编下码
-	req, err := http.NewRequest("POST", uri, parms)
+	
+	d, err:= json.Marshal(w)
 	if err != nil {
-		return
+		fmt.Println(err)
+		os.Exit(2)
 	}
+	req, _ := http.NewRequest("POST", uri, strings.NewReader(string(d)))
 	req.Header.Set("Content-Type", "application/json")
-	resp, err := client.Do(req)
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return
 	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return
 	}
-	fmt.Println(resp.StatusCode)
+	fmt.Println(res.StatusCode)
 	fmt.Println(body)
 }
 
@@ -77,6 +75,16 @@ func template(g *Bodydata) string {
 			>提交人:<font color="comment">%v</font>
 			`, g.ObjectKind, g.Project.Name, g.ObjectAttributes.CommitID, g.Project.HTTPURL, g.Project.HTTPURL, g.User.Name)
 	case "merge_request":
+		return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
+			>事件类型: <font color="red">%v</font>
+			>项目名称: <font color="green">%v</font>
+			>源分支: <font color="green">%v</font>
+			>目的分支: <font color="warning">%v</font>
+			>最后commit: <font color="comment">%v</font>
+			>评论时间: <font color="comment">%v</font>
+			>提交人:<font color="comment">%v</font>
+			`, g.ObjectKind, g.Project.Name, g.ObjectAttributes.CommitID, g.Project.HTTPURL, g.Project.HTTPURL, g.User.Name, g.User.Name)
+	case "push":
 		return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
 			>事件类型: <font color="red">%v</font>
 			>项目名称: <font color="green">%v</font>
