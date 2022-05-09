@@ -22,13 +22,13 @@ type Webhookdata struct {
 }
 
 // 触发企业微信机器人
-func WetchatWebhook(dat string) {
+func WetchatWebhook(cont string) {
 	uri := os.Getenv("URL")
 	client := &http.Client{}
 	urlmap := url.Values{}
 	w := &Webhookdata{
 		msgtype:      "markdown",
-		Markdownform: &Markdownform{dat},
+		Markdownform: &Markdownform{cont},
 	}
 	urlmap.Add("msgtype", w.msgtype)
 	urlmap.Add("markdown", w.content)
@@ -112,6 +112,7 @@ func gitPush(c *gin.Context) {
 	if err != nil {
 		fmt.Println("error:", err)
 		t := template(bodydata)
+		fmt.Println(t)
 		go WetchatWebhook(t) // 调用企业微信机器人接口
 		return
 	} else {
