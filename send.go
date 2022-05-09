@@ -27,8 +27,8 @@ func WetchatWebhook(dat string) {
 	client := &http.Client{}
 	urlmap := url.Values{}
 	w := &Webhookdata{
-		msgtype: "markdown",
-		content: dat,
+		msgtype:      "markdown",
+		Markdownform: &Markdownform{dat},
 	}
 	urlmap.Add("msgtype", w.msgtype)
 	urlmap.Add("markdown", w.content)
@@ -39,12 +39,16 @@ func WetchatWebhook(dat string) {
 	}
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
+	if err != nil {
+		return
+	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
-	fmt.Println(string(body))
+	fmt.Println(resp.StatusCode)
+	fmt.Println(body)
 }
 
 // // 定义Gitdata 数据结构,封装请求体解码数据
@@ -60,8 +64,8 @@ func WetchatWebhook(dat string) {
 // }
 
 // 企业微信模板
-func template(g, *Bodydata) string {
-	kind := g.Objectkind
+func template(g *Bodydata) string {
+	kind := g.ObjectKind
 	switch kind {
 	case "note":
 		return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
@@ -71,7 +75,7 @@ func template(g, *Bodydata) string {
 			>评论地址: <font color="warning">%v</font>
 			>评论时间: <font color="comment">%v</font>
 			>提交人:<font color="comment">%v</font>
-			`, g.Objectkind, g.Projectname, g.Commit, g.Projecturl, g.Data, g.User)
+			`, g.ObjectKind, g.Project.Name, g.ObjectAttributes.CommitID, g.Project.HTTPURL, g.Project.HTTPURL, g.User.Name)
 	case "merge_request":
 		return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
 			>事件类型: <font color="red">%v</font>
@@ -81,7 +85,7 @@ func template(g, *Bodydata) string {
 			>最后commit: <font color="comment">%v</font>
 			>评论时间: <font color="comment">%v</font>
 			>提交人:<font color="comment">%v</font>
-			`, g.Objectkind, g.Projectname, g.Sourcebranch, g.Targetbranch, g.Commit, g.Data, g.User)
+			`, g.ObjectKind, g.Project.Name, g.ObjectAttributes.CommitID, g.Project.HTTPURL, g.Project.HTTPURL, g.User.Name, g.User.Name)
 	default:
 		return ""
 	}
@@ -89,6 +93,7 @@ func template(g, *Bodydata) string {
 
 // 请求函数
 func gitPush(c *gin.Context) {
+	var bodydata = &Bodydata{}
 	matched, _ := VerifySignature(c)
 	if !matched {
 		err := "Token did not match"
@@ -103,10 +108,10 @@ func gitPush(c *gin.Context) {
 		fmt.Println("error:", err)
 		return
 	}
-	err := json.Unmarshal(body, &Gitdata) // 解析完request body 数据
+	err = json.Unmarshal(body, bodydata) // 解析完request body 数据
 	if err != nil {
 		fmt.Println("error:", err)
-		t := template(&Gitdata)
+		t := template(bodydata)
 		go WetchatWebhook(t) // 调用企业微信机器人接口
 		return
 	} else {
