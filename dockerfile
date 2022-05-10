@@ -13,4 +13,5 @@ RUN  sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/r
       &&  apk add --no-cache bash openssl curl
 COPY --from=builder /usr/bin/eventserver /usr/bin/
 COPY . ./
+RUN chmod +x ./start.sh
 ENTRYPOINT ["bash", "-c", "./start.sh"]
