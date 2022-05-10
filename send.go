@@ -67,7 +67,8 @@ func template(g *Bodydata) string {
 			>提交人:<font color="comment">%v</font>
 			`, g.ObjectKind, g.MergeRequest.SourceBranch, g.MergeRequest.TargetBranch, g.MergeRequest.Title, g.MergeRequest.Description, g.MergeRequest.UpdatedAt, g.ObjectAttributes.URL, g.ObjectAttributes.Note, g.ObjectAttributes.AuthorID, g.ObjectAttributes.UpdatedAt, g.MergeRequest.LastCommit.Author.Name)
 	case "merge_request":
-		return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
+		if g.ObjectAttributes.State != "merged" {
+			return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
 			>事件类型: <font color="red">%v</font>
 			>源分支: <font color="green">%v</font>
 			>目的分支: <font color="green">%v</font>
@@ -78,7 +79,9 @@ func template(g *Bodydata) string {
 			>状态: <font color="green">%v</font>
 			>Merge状态: <font color="green">%v</font>
 			>提交人:<font color="comment">%v</font>
-			`, g.ObjectKind, g.ObjectAttributes.SourceBranch, g.ObjectAttributes.TargetBranch, g.ObjectAttributes.Title, g.ObjectAttributes.Description, g.ObjectAttributes.UpdatedAt, g.ObjectAttributes.URL, g.ObjectAttributes.State, g.ObjectAttributes.MergeStatus, g.ObjectAttributes.LastCommit.Author.Name)
+		`, g.ObjectKind, g.ObjectAttributes.SourceBranch, g.ObjectAttributes.TargetBranch, g.ObjectAttributes.Title, g.ObjectAttributes.Description, g.ObjectAttributes.UpdatedAt, g.ObjectAttributes.URL, g.ObjectAttributes.State, g.ObjectAttributes.MergeStatus, g.ObjectAttributes.LastCommit.Author.Name)
+		}
+		return ""
 	case "build1":
 		if g.BuildStatus == "failed" {
 			return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
