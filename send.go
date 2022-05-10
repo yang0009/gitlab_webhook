@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,8 +16,8 @@ type Markdownform struct {
 }
 
 type Webhookdata struct {
-	Msgtype string `json:"msgtype"`
-	*Markdownform
+	Msgtype       string `json:"msgtype"`
+	*Markdownform `json:"markdown"`
 }
 
 // 触发企业微信机器人
@@ -26,8 +27,8 @@ func WetchatWebhook(cont string) {
 		Msgtype:      "markdown",
 		Markdownform: &Markdownform{cont},
 	}
-	
-	d, err:= json.Marshal(w)
+
+	d, err := json.Marshal(w)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(2)
