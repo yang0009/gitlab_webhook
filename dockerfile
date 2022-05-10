@@ -12,4 +12,5 @@ FROM ${IMAGE}
 RUN  sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
       &&  apk add --no-cache bash openssl curl
 COPY --from=builder /usr/bin/eventserver /usr/bin/
-ENTRYPOINT ["bash", "-c", "start.sh"]
+COPY . ./
+ENTRYPOINT ["bash", "-c", "./start.sh"]
