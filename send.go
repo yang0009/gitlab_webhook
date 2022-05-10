@@ -27,7 +27,7 @@ func WetchatWebhook(cont string) {
 		Msgtype:      "markdown",
 		Markdownform: &Markdownform{cont},
 	}
-
+        fmt.Println(w)
 	d, err := json.Marshal(w)
 	if err != nil {
 		fmt.Println(err)
@@ -118,11 +118,11 @@ func gitPush(c *gin.Context) {
 	err = json.Unmarshal(body, bodydata) // 解析完request body 数据
 	if err != nil {
 		fmt.Println("error:", err)
+		return
+	} else {
 		t := template(bodydata)
 		fmt.Println(t)
 		go WetchatWebhook(t) // 调用企业微信机器人接口
-		return
-	} else {
 		c.String(http.StatusOK, "ok")
 	}
 }
