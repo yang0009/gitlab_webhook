@@ -5,19 +5,17 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 	"github.com/gin-gonic/gin"
-	"k8s.io/apimachinery/pkg/util/json"
 )
 
 type Markdownform struct {
-	content string
+	Content string `json:"content"`
 }
 
 type Webhookdata struct {
-	msgtype string
+	Msgtype string `json:"msgtype"`
 	*Markdownform
 }
 
@@ -25,7 +23,7 @@ type Webhookdata struct {
 func WetchatWebhook(cont string) {
 	uri := os.Getenv("URL")
 	w := &Webhookdata{
-		msgtype:      "markdown",
+		Msgtype:      "markdown",
 		Markdownform: &Markdownform{cont},
 	}
 	
