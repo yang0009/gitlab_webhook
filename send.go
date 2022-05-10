@@ -75,11 +75,8 @@ func template(g *Bodydata) string {
 			>描述: <font color="green">%v</font>
 			>更新时间: <font color="green">%v</font>
 			>MR地址: <font color="warning">%v</font>
-			>评论内容: <font color="comment">%v</font>
-			>评论人: <font color="comment">%v</font>
-			>评论时间: <font color="green">%v</font>
 			>提交人:<font color="comment">%v</font>
-			`, g.ObjectKind, g.MergeRequest.SourceBranch, g.MergeRequest.TargetBranch, g.MergeRequest.Title, g.MergeRequest.Description, g.MergeRequest.UpdatedAt, g.ObjectAttributes.URL, g.ObjectAttributes.Note, g.ObjectAttributes.UpdatedAt, g.ObjectAttributes.AuthorID, g.MergeRequest.LastCommit.Author.Name)
+			`, g.ObjectKind, g.ObjectAttributes.SourceBranch, g.ObjectAttributes.TargetBranch, g.ObjectAttributes.Title, g.ObjectAttributes.Description, g.ObjectAttributes.UpdatedAt, g.ObjectAttributes.URL, g.ObjectAttributes.LastCommit.Author.Name)
 	case "push":
 		return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
 			>事件类型: <font color="red">%v</font>

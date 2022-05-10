@@ -1,6 +1,5 @@
 package main
 
-
 type Bodydata struct {
 	ObjectKind string `json:"object_kind"`
 	User struct {
@@ -33,6 +32,17 @@ type Bodydata struct {
 		Homepage string `json:"homepage"`
 	} `json:"repository"`
 	ObjectAttributes struct {
+		TargetBranch string `json:"target_branch"`
+		SourceBranch string `json:"source_branch"`
+		SourceProjectID int `json:"source_project_id"`
+		AssigneeID int `json:"assignee_id"`
+		Title string `json:"title"`
+		MilestoneID interface{} `json:"milestone_id"`
+		State string `json:"state"`
+		MergeStatus string `json:"merge_status"`
+		TargetProjectID int `json:"target_project_id"`
+		Iid int `json:"iid"`
+		Description string `json:"description"`
 		ID int `json:"id"`
 		Note string `json:"note"`
 		NoteableType string `json:"noteable_type"`
@@ -47,6 +57,55 @@ type Bodydata struct {
 		System bool `json:"system"`
 		StDiff interface{} `json:"st_diff"`
 		URL string `json:"url"`
+		Source struct {
+			Name string `json:"name"`
+			Description string `json:"description"`
+			WebURL string `json:"web_url"`
+			AvatarURL interface{} `json:"avatar_url"`
+			GitSSHURL string `json:"git_ssh_url"`
+			GitHTTPURL string `json:"git_http_url"`
+			Namespace string `json:"namespace"`
+			VisibilityLevel int `json:"visibility_level"`
+			PathWithNamespace string `json:"path_with_namespace"`
+			DefaultBranch string `json:"default_branch"`
+			Homepage string `json:"homepage"`
+			URL string `json:"url"`
+			SSHURL string `json:"ssh_url"`
+			HTTPURL string `json:"http_url"`
+		} `json:"source"`
+		Target struct {
+			Name string `json:"name"`
+			Description string `json:"description"`
+			WebURL string `json:"web_url"`
+			AvatarURL interface{} `json:"avatar_url"`
+			GitSSHURL string `json:"git_ssh_url"`
+			GitHTTPURL string `json:"git_http_url"`
+			Namespace string `json:"namespace"`
+			VisibilityLevel int `json:"visibility_level"`
+			PathWithNamespace string `json:"path_with_namespace"`
+			DefaultBranch string `json:"default_branch"`
+			Homepage string `json:"homepage"`
+			URL string `json:"url"`
+			SSHURL string `json:"ssh_url"`
+			HTTPURL string `json:"http_url"`
+		} `json:"target"`
+		LastCommit struct {
+			ID string `json:"id"`
+			Message string `json:"message"`
+			Timestamp string `json:"timestamp"`
+			URL string `json:"url"`
+			Author struct {
+				Name string `json:"name"`
+				Email string `json:"email"`
+			} `json:"author"`
+		} `json:"last_commit"`
+		WorkInProgress bool `json:"work_in_progress"`
+		Action string `json:"action"`
+		Assignee struct {
+			Name string `json:"name"`
+			Username string `json:"username"`
+			AvatarURL string `json:"avatar_url"`
+		} `json:"assignee"`
 	} `json:"object_attributes"`
 	MergeRequest struct {
 		ID int `json:"id"`
