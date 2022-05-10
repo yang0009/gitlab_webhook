@@ -8,9 +8,9 @@
 gitlab_events->gitlab_webhook: send events
 ```
 ## 服务启动
-#####构建服务镜像
+##### 构建服务镜像
 `docker build -t registry-vpc.cn-shenzhen.aliyuncs.com/xkool_dev/eventserver:1.0 -f dockerfile  .`
-#####运行
+##### 运行
 `docker run -it -d --restart=always -p 8079:8079 registry-vpc.cn-shenzhen.aliyuncs.com/xkool_dev/eventserver:1.0`
 
 ### End
