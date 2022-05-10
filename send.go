@@ -27,7 +27,7 @@ func WetchatWebhook(cont string) {
 		Msgtype:      "markdown",
 		Markdownform: &Markdownform{cont},
 	}
-        fmt.Println(w)
+	fmt.Println(w)
 	d, err := json.Marshal(w)
 	if err != nil {
 		fmt.Println(err)
@@ -48,18 +48,6 @@ func WetchatWebhook(cont string) {
 	fmt.Println(body)
 }
 
-// // 定义Gitdata 数据结构,封装请求体解码数据
-// type Gitdata struct{
-// 	*Bodydata.ObjectKind
-// 	*Bodydata.Project
-// 	*Bodydata.ObjectAttributes
-// 	*Bodydata.LastCommit
-// 	*Bodydata.MergeRequest
-// 	*Bodydata.MergeRequest
-// 	*Bodydata.Author
-// 	Flag string
-// }
-
 // 企业微信模板
 func template(g *Bodydata) string {
 	kind := g.ObjectKind
@@ -67,32 +55,45 @@ func template(g *Bodydata) string {
 	case "note":
 		return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
 			>事件类型: <font color="red">%v</font>
-			>项目名称: <font color="green">%v</font>
-			>评论内容: <font color="green">%v</font>
-			>评论地址: <font color="warning">%v</font>
-			>评论时间: <font color="comment">%v</font>
+			>源分支: <font color="green">%v</font>
+			>目的分支: <font color="green">%v</font>
+			>Title: <font color="green">%v</font>
+			>描述: <font color="green">%v</font>
+			>更新时间: <font color="green">%v</font>
+			>MR地址: <font color="warning">%v</font>
+			>评论内容: <font color="comment">%v</font>
+			>评论人: <font color="comment">%v</font>
+			>评论时间: <font color="green">%v</font>
 			>提交人:<font color="comment">%v</font>
-			`, g.ObjectKind, g.Project.Name, g.ObjectAttributes.CommitID, g.Project.HTTPURL, g.Project.HTTPURL, g.User.Name)
+			`, g.ObjectKind, g.MergeRequest.SourceBranch, g.MergeRequest.TargetBranch, g.MergeRequest.Title, g.MergeRequest.Description, g.MergeRequest.UpdatedAt, g.ObjectAttributes.URL, g.ObjectAttributes.Note, g.ObjectAttributes.AuthorID, g.ObjectAttributes.UpdatedAt, g.MergeRequest.LastCommit.Author.Name)
 	case "merge_request":
 		return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
 			>事件类型: <font color="red">%v</font>
-			>项目名称: <font color="green">%v</font>
 			>源分支: <font color="green">%v</font>
-			>目的分支: <font color="warning">%v</font>
-			>最后commit: <font color="comment">%v</font>
-			>评论时间: <font color="comment">%v</font>
+			>目的分支: <font color="green">%v</font>
+			>Title: <font color="green">%v</font>
+			>描述: <font color="green">%v</font>
+			>更新时间: <font color="green">%v</font>
+			>MR地址: <font color="warning">%v</font>
+			>评论内容: <font color="comment">%v</font>
+			>评论人: <font color="comment">%v</font>
+			>评论时间: <font color="green">%v</font>
 			>提交人:<font color="comment">%v</font>
-			`, g.ObjectKind, g.Project.Name, g.ObjectAttributes.CommitID, g.Project.HTTPURL, g.Project.HTTPURL, g.User.Name, g.User.Name)
+			`, g.ObjectKind, g.MergeRequest.SourceBranch, g.MergeRequest.TargetBranch, g.MergeRequest.Title, g.MergeRequest.Description, g.MergeRequest.UpdatedAt, g.ObjectAttributes.URL, g.ObjectAttributes.Note, g.ObjectAttributes.UpdatedAt, g.ObjectAttributes.AuthorID, g.MergeRequest.LastCommit.Author.Name)
 	case "push":
 		return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
 			>事件类型: <font color="red">%v</font>
-			>项目名称: <font color="green">%v</font>
 			>源分支: <font color="green">%v</font>
-			>目的分支: <font color="warning">%v</font>
-			>最后commit: <font color="comment">%v</font>
-			>评论时间: <font color="comment">%v</font>
+			>目的分支: <font color="green">%v</font>
+			>Title: <font color="green">%v</font>
+			>描述: <font color="green">%v</font>
+			>更新时间: <font color="green">%v</font>
+			>MR地址: <font color="warning">%v</font>
+			>评论内容: <font color="comment">%v</font>
+			>评论人: <font color="comment">%v</font>
+			>评论时间: <font color="green">%v</font>
 			>提交人:<font color="comment">%v</font>
-			`, g.ObjectKind, g.Project.Name, g.ObjectAttributes.CommitID, g.Project.HTTPURL, g.Project.HTTPURL, g.User.Name, g.User.Name)
+			`, g.ObjectKind, g.MergeRequest.SourceBranch, g.MergeRequest.TargetBranch, g.MergeRequest.Title, g.MergeRequest.Description, g.MergeRequest.UpdatedAt, g.ObjectAttributes.URL, g.ObjectAttributes.Note, g.ObjectAttributes.UpdatedAt, g.ObjectAttributes.AuthorID, g.MergeRequest.LastCommit.Author.Name)
 	default:
 		return ""
 	}
