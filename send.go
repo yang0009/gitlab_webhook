@@ -72,7 +72,7 @@ func template(g *Bodydata) string {
 			>分支: <font color="green">%v ---> %v</font>
 			>Title: <font color="green">%v</font>
 			>描述: <font color="green">%v</font>
-			>Merge状态: <font color="green">%v</font>`, g.ObjectAttributes.LastCommit.Author.Name, g.ObjectAttributes.Action, g.ObjectAttributes.URL, g.ObjectAttributes.SourceBranch, g.ObjectAttributes.TargetBranch, g.ObjectAttributes.Title, g.ObjectAttributes.Description, g.ObjectAttributes.MergeStatus)
+			>Merge状态: <font color="green">%v</font>`, g.User.Name, g.ObjectAttributes.Action, g.ObjectAttributes.URL, g.ObjectAttributes.SourceBranch, g.ObjectAttributes.TargetBranch, g.ObjectAttributes.Title, g.ObjectAttributes.Description, g.ObjectAttributes.MergeStatus)
 		}
 		return ""
 	case "build1":
