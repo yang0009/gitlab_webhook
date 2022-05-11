@@ -52,7 +52,7 @@ func WetchatWebhook(cont string) {
 func template(g *Bodydata) string {
 	kind := g.ObjectKind
 	switch kind {
-	case "note":
+	case "note1":
 		return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
 			>事件类型: <font color="red">%v</font>
 			>源分支: <font color="green">%v</font>
@@ -67,19 +67,13 @@ func template(g *Bodydata) string {
 			>提交人:<font color="comment">%v</font>
 			`, g.ObjectKind, g.MergeRequest.SourceBranch, g.MergeRequest.TargetBranch, g.MergeRequest.Title, g.MergeRequest.Description, g.MergeRequest.UpdatedAt, g.ObjectAttributes.URL, g.ObjectAttributes.Note, g.ObjectAttributes.AuthorID, g.ObjectAttributes.UpdatedAt, g.MergeRequest.LastCommit.Author.Name)
 	case "merge_request":
-		if g.ObjectAttributes.State != "merged" {
-			return fmt.Sprintf(`<font color="warning">Gitlab事件通知</font>。
-			>事件类型: <font color="red">%v</font>
-			>源分支: <font color="green">%v</font>
-			>目的分支: <font color="green">%v</font>
+		if g.ObjectAttributes.State != "merged" && g.ObjectAttributes.WorkInProgress == false {
+			return fmt.Sprintf(
+			`%v <font color="warning">%v</font> [%v](%V)
+			>分支: <font color="green">%v ---> %v</font>
 			>Title: <font color="green">%v</font>
 			>描述: <font color="green">%v</font>
-			>更新时间: <font color="green">%v</font>
-			>MR地址: <font color="warning">%v</font>
-			>状态: <font color="green">%v</font>
-			>Merge状态: <font color="green">%v</font>
-			>提交人:<font color="comment">%v</font>
-		`, g.ObjectKind, g.ObjectAttributes.SourceBranch, g.ObjectAttributes.TargetBranch, g.ObjectAttributes.Title, g.ObjectAttributes.Description, g.ObjectAttributes.UpdatedAt, g.ObjectAttributes.URL, g.ObjectAttributes.State, g.ObjectAttributes.MergeStatus, g.ObjectAttributes.LastCommit.Author.Name)
+			>Merge状态: <font color="green">%v</font>`, g.ObjectAttributes.LastCommit.Author.Name, g.ObjectAttributes.Action, g.ObjectAttributes.URL, g.ObjectAttributes.URL, g.ObjectAttributes.SourceBranch, g.ObjectAttributes.TargetBranch, g.ObjectAttributes.Title, g.ObjectAttributes.Description, g.ObjectAttributes.MergeStatus)
 		}
 		return ""
 	case "build1":
