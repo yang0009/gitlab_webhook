@@ -69,11 +69,11 @@ func template(g *Bodydata) string {
 	case "merge_request":
 		if g.ObjectAttributes.State != "merged" && g.ObjectAttributes.WorkInProgress == false {
 			return fmt.Sprintf(
-			`%v <font color="warning">%v</font> [%v](%V)
+				`%v <font color="warning">%v</font> [Merge Request](%V)
 			>分支: <font color="green">%v ---> %v</font>
 			>Title: <font color="green">%v</font>
 			>描述: <font color="green">%v</font>
-			>Merge状态: <font color="green">%v</font>`, g.ObjectAttributes.LastCommit.Author.Name, g.ObjectAttributes.Action, g.ObjectAttributes.URL, g.ObjectAttributes.URL, g.ObjectAttributes.SourceBranch, g.ObjectAttributes.TargetBranch, g.ObjectAttributes.Title, g.ObjectAttributes.Description, g.ObjectAttributes.MergeStatus)
+			>Merge状态: <font color="green">%v</font>`, g.ObjectAttributes.LastCommit.Author.Name, g.ObjectAttributes.Action, g.ObjectAttributes.URL, g.ObjectAttributes.SourceBranch, g.ObjectAttributes.TargetBranch, g.ObjectAttributes.Title, g.ObjectAttributes.Description, g.ObjectAttributes.MergeStatus)
 		}
 		return ""
 	case "build1":
