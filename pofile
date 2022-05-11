@@ -1,2 +1,2 @@
 export TOKEN_KEY=009473401a3b0851f6b65d4701644c7b770fb59f
-export URL=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=b29f5e6c-9b69-4e3a-9031-2aa91e5134fe
+export URL=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=a19cd3e4-34ae-4870-b32c-2eb9759e0349
