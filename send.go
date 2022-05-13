@@ -128,7 +128,7 @@ func template(g *Bodydata) string {
 			>提交人:<font color="comment">%v</font>
 			`, g.ObjectKind, g.MergeRequest.SourceBranch, g.MergeRequest.TargetBranch, g.MergeRequest.Title, g.MergeRequest.Description, g.MergeRequest.UpdatedAt, g.ObjectAttributes.URL, g.ObjectAttributes.Note, g.ObjectAttributes.AuthorID, g.ObjectAttributes.UpdatedAt, g.MergeRequest.LastCommit.Author.Name)
 	case "merge_request":
-		if g.ObjectAttributes.State != "merged" && g.ObjectAttributes.WorkInProgress == false {
+		if g.ObjectAttributes.State != "merged" && !g.ObjectAttributes.WorkInProgress && g.ObjectAttributes.Action != "update" {
 			return fmt.Sprintf(
 				`%v <font color="warning">%v</font> [Merge Request](%V)
 			>分支: <font color="green">%v ---> %v</font>
@@ -160,7 +160,7 @@ func templatetext(g *Bodydata) string {
 	kind := g.ObjectKind
 	switch kind {
 	case "merge_request":
-		if g.ObjectAttributes.State != "merged" && g.ObjectAttributes.WorkInProgress == false {
+		if g.ObjectAttributes.State != "merged" && !g.ObjectAttributes.WorkInProgress && g.ObjectAttributes.Action != "update" {
 			return g.ObjectAttributes.URL
 		}
 		return ""
