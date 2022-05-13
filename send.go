@@ -7,32 +7,94 @@ import (
 	"net/http"
 	"os"
 	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
-type Markdownform struct {
+type Dataform struct {
 	Content string `json:"content"`
 }
 
-type Webhookdata struct {
-	Msgtype       string `json:"msgtype"`
-	*Markdownform `json:"markdown"`
+type TextDataform struct {
+	Content             string   `json:"content"`
+	MentionedMobileList []string `json:"mentioned_mobile_list"`
 }
 
-// 触发企业微信机器人
-func WetchatWebhook(cont string) {
-	uri := os.Getenv("URL")
-	w := &Webhookdata{
-		Msgtype:      "markdown",
-		Markdownform: &Markdownform{cont},
+type Markdowndata struct {
+	Msgtype   string `json:"msgtype"`
+	*Dataform `json:"markdown"`
+}
+type Textdata struct {
+	Msgtype       string `json:"msgtype"`
+	*TextDataform `json:"text"`
+}
+
+// 找到需要@的人员对应手机号
+func phonelist(s string) string {
+	Someone := map[string]string{
+		"ns":         "18127386881",
+		"tristanwqy": "13076817098",
+		"ssh415":     "13602595410",
+		"fonshin":    "13048894558",
+		"fanqidi":    "18503019002",
+		"yumo":       "13520960160",
 	}
-	fmt.Println(w)
-	d, err := json.Marshal(w)
+	if v, ok := Someone[s]; ok {
+		fmt.Println(v)
+		return v
+	} else {
+		fmt.Println("Key Not Found")
+		return ""
+	}
+}
+
+// 找到需要被@的开发人员
+func getuser(g *Bodydata) string {
+	if g.ObjectAttributes.Action == "approved" && g.ObjectAttributes.LastCommit.Author.Name != "" {
+		return fmt.Sprintf("%v", g.ObjectAttributes.LastCommit.Author.Name)
+	} else if g.ObjectAttributes.Action == "open" && g.ObjectAttributes.Assignee.Name != "" {
+		return fmt.Sprintf("%v", g.ObjectAttributes.Assignee.Name)
+	} else {
+		return ""
+	}
+}
+
+// 序列化text模板
+func textjson(da string, at string) string {
+	a := phonelist(at)
+	t := &Textdata{
+		Msgtype: "text",
+		TextDataform: &TextDataform{
+			da,
+			[]string{fmt.Sprintf("%v", a)},
+		},
+	}
+	d, err := json.Marshal(t)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(2)
 	}
-	req, _ := http.NewRequest("POST", uri, strings.NewReader(string(d)))
+	return string(d)
+}
+
+// 序列化md模板
+func mdjson(da string) string {
+	t := &Markdowndata{
+		Msgtype:  "markdown",
+		Dataform: &Dataform{da},
+	}
+	d, err := json.Marshal(t)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(2)
+	}
+	return string(d)
+}
+
+// 触发企业微信机器人
+func WetchatWebhook(s string) {
+	uri := os.Getenv("URL")
+	req, _ := http.NewRequest("POST", uri, strings.NewReader(s))
 	req.Header.Set("Content-Type", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -47,7 +109,7 @@ func WetchatWebhook(cont string) {
 	fmt.Println(body)
 }
 
-// 企业微信模板
+// md类型企业微信模板
 func template(g *Bodydata) string {
 	kind := g.ObjectKind
 	switch kind {
@@ -93,6 +155,20 @@ func template(g *Bodydata) string {
 	}
 }
 
+// text 类型模板
+func templatetext(g *Bodydata) string {
+	kind := g.ObjectKind
+	switch kind {
+	case "merge_request":
+		if g.ObjectAttributes.State != "merged" && g.ObjectAttributes.WorkInProgress == false {
+			return g.ObjectAttributes.URL
+		}
+		return ""
+	default:
+		return ""
+	}
+}
+
 // 请求函数
 func gitPush(c *gin.Context) {
 	var bodydata = &Bodydata{}
@@ -115,9 +191,18 @@ func gitPush(c *gin.Context) {
 		fmt.Println("error:", err)
 		return
 	} else {
-		t := template(bodydata)
-		fmt.Println(t)
-		go WetchatWebhook(t) // 调用企业微信机器人接口
+		md := template(bodydata)
+		text := templatetext(bodydata)
+		user := getuser(bodydata)
+		fmt.Println("user=", user)
+		fmt.Println("md=", md)
+		fmt.Println("text=", text)
+		tj := textjson(text, user)
+		mj := mdjson(md)
+		fmt.Println("md:", mj)
+		fmt.Println("text:", tj)
+		WetchatWebhook(mj) // 调用企业微信机器人接口
+		WetchatWebhook(tj) // 单独发送url
 		c.String(http.StatusOK, "ok")
 	}
 }
