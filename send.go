@@ -32,12 +32,12 @@ type Textdata struct {
 // 找到需要@的人员对应手机号
 func phonelist(s string) string {
 	Someone := map[string]string{
-		"ns":         "18127386881",
-		"tristanwqy": "13076817098",
-		"ssh415":     "13602595410",
-		"fonshin":    "13048894558",
-		"fanqidi":    "18503019002",
-		"yumo":       "13520960160",
+		"ns":         "1812***86881",
+		"tristanwqy": "130***170984",
+		"ssh415":     "130***259541",
+		"fonshin":    "130***889455",
+		"fanqidi":    "185***19002",
+		"yumo":       "135***60160",
 	}
 	if v, ok := Someone[s]; ok {
 		fmt.Println(v)
